@@ -119,7 +119,7 @@ function CompareChips({ label, icon, left, right, points }) {
       </div>
       <div className="md-chip-list">
         {shared.map(item => (
-          <span key={item} className="md-chip md-chip-match">✓ {item}</span>
+          <span key={item} className="md-chip md-chip-match">🌱🎓 {item}</span>
         ))}
         {leftOnly.map(item => (
           <span key={item} className="md-chip md-chip-left">🌱 {item}</span>
