@@ -1,13 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
+  process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY
 )
 
+const VALID_TOKENS = new Set(['tap-mode'])
+
 export const handler = async (event) => {
   const token = event.headers['x-admin-token']
-  if (!token) {
+  if (!token || !VALID_TOKENS.has(token)) {
     return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) }
   }
 

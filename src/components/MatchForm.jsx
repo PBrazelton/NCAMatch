@@ -75,11 +75,11 @@ export default function MatchForm({ onSubmitted }) {
   }
 
   const ChipGroup = ({ items, selected, onToggle }) => (
-    <div className="chip-group">
+    <div className="chip-group" role="group">
       {items.map(([em, name]) => (
-        <div key={name} className={`chip ${selected.includes(name) ? "on" : ""}`} onClick={() => onToggle(name)}>
+        <button type="button" key={name} className={`chip ${selected.includes(name) ? "on" : ""}`} onClick={() => onToggle(name)} aria-pressed={selected.includes(name)}>
           {em} {name}
-        </div>
+        </button>
       ))}
     </div>
   )
@@ -95,16 +95,16 @@ export default function MatchForm({ onSubmitted }) {
           </div>
           <label>I'm joining as a…</label>
           <div style={{ display:"flex", gap:14, marginBottom:28 }}>
-            <div className={`role-card ${role === "mentor" ? "on" : ""}`} onClick={() => setRole("mentor")}>
+            <button type="button" className={`role-card ${role === "mentor" ? "on" : ""}`} onClick={() => setRole("mentor")} aria-pressed={role === "mentor"}>
               <div style={{ fontSize:34 }}>🎓</div>
               <div className="role-title">Senior Mentor</div>
               <div className="role-desc">Class of '27 — guide a sophomore through their Nova journey</div>
-            </div>
-            <div className={`role-card ${role === "mentee" ? "on" : ""}`} onClick={() => setRole("mentee")}>
+            </button>
+            <button type="button" className={`role-card ${role === "mentee" ? "on" : ""}`} onClick={() => setRole("mentee")} aria-pressed={role === "mentee"}>
               <div style={{ fontSize:34 }}>🌱</div>
               <div className="role-title">Sophomore Mentee</div>
               <div className="role-desc">Class of '28 or '29 — get matched with a senior who gets it</div>
-            </div>
+            </button>
           </div>
           <button className="btn btn-gold" style={{ width:"100%" }} disabled={!role} onClick={() => setStep(1)}>Get Started →</button>
         </>
@@ -122,9 +122,9 @@ export default function MatchForm({ onSubmitted }) {
             <label>Graduation year</label>
             <div className="chip-group">
               {(role === "mentor" ? ["'27"] : ["'28","'29"]).map(y => (
-                <div key={y} className={`chip ${form.gradYear === y ? "on" : ""}`} onClick={() => setF("gradYear", y)} style={{ padding:"10px 22px", fontWeight:800, fontSize:15 }}>
+                <button type="button" key={y} className={`chip ${form.gradYear === y ? "on" : ""}`} onClick={() => setF("gradYear", y)} aria-pressed={form.gradYear === y} style={{ padding:"10px 22px", fontWeight:800, fontSize:15 }}>
                   {y}
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -208,9 +208,9 @@ export default function MatchForm({ onSubmitted }) {
             <label>Days that work for you</label>
             <div className="chip-group">
               {DAYS.map(d => (
-                <div key={d} className={`chip ${form.availDays.includes(d) ? "on" : ""}`} onClick={() => tog("availDays", d)} style={{ padding:"9px 18px", fontWeight:700 }}>
+                <button type="button" key={d} className={`chip ${form.availDays.includes(d) ? "on" : ""}`} onClick={() => tog("availDays", d)} aria-pressed={form.availDays.includes(d)} style={{ padding:"9px 18px", fontWeight:700 }}>
                   {d}
-                </div>
+                </button>
               ))}
             </div>
           </div>

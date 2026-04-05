@@ -52,6 +52,8 @@ input[type=text]:focus, textarea:focus { border-color: #6366f1; }
 
 /* ── Chips ──────────────────────────────────────────────────────── */
 
+button.chip, button.role-card { font: inherit; text-align: inherit; }
+
 .chip {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 8px 14px; border-radius: 50px;
