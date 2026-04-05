@@ -80,17 +80,17 @@ export default function AdminDashboard() {
       </div>
 
       <div style={{ display:"flex", gap:10, marginBottom:24 }}>
-        <div className="stat-box" style={{ background:"#f0fdf4", border:"2px solid #bbf7d0" }}>
-          <div className="stat-num" style={{ color:"#166534" }}>{mentors.length}</div>
-          <div className="stat-lbl" style={{ color:"#15803d" }}>Mentors</div>
+        <div className="stat-box" style={{ background:"var(--green-bg)", border:"2px solid var(--green-border)" }}>
+          <div className="stat-num" style={{ color:"var(--green-text)" }}>{mentors.length}</div>
+          <div className="stat-lbl" style={{ color:"var(--green-label)" }}>Mentors</div>
         </div>
-        <div className="stat-box" style={{ background:"#eff6ff", border:"2px solid #bfdbfe" }}>
-          <div className="stat-num" style={{ color:"#1e40af" }}>{mentees.length}</div>
-          <div className="stat-lbl" style={{ color:"#1d4ed8" }}>Mentees</div>
+        <div className="stat-box" style={{ background:"var(--blue-bg)", border:"2px solid var(--blue-border)" }}>
+          <div className="stat-num" style={{ color:"var(--blue-text)" }}>{mentees.length}</div>
+          <div className="stat-lbl" style={{ color:"var(--blue-label)" }}>Mentees</div>
         </div>
-        <div className="stat-box" style={{ background:"#fffbeb", border:"2px solid #fde68a" }}>
-          <div className="stat-num" style={{ color:"#92400e" }}>{submissions.length}</div>
-          <div className="stat-lbl" style={{ color:"#b45309" }}>Total</div>
+        <div className="stat-box" style={{ background:"var(--warm-bg)", border:"2px solid var(--warm-border)" }}>
+          <div className="stat-num" style={{ color:"var(--amber-text)" }}>{submissions.length}</div>
+          <div className="stat-lbl" style={{ color:"var(--amber-label)" }}>Total</div>
         </div>
       </div>
 
@@ -120,7 +120,7 @@ export default function AdminDashboard() {
               ]
               const sharedDays = (mentor.avail_days || []).filter(d => (mentee.avail_days || []).includes(d))
               return (
-                <div key={mentor.id} className="mentor-match" style={{ background: i === 0 ? "#fffbeb" : "#f8fafc", border: `1.5px solid ${i === 0 ? "#fde68a" : "#e2e8f0"}` }}>
+                <div key={mentor.id} className="mentor-match" style={{ background: i === 0 ? "var(--warm-bg)" : "var(--slate-50)", border: `1.5px solid ${i === 0 ? "var(--warm-border)" : "var(--slate-200)"}` }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
                     <div style={{ fontWeight:700, fontSize:13, color:"var(--navy)" }}>
                       {i === 0 ? "⭐ " : ""}{mentor.name} <span style={{ color:"var(--slate-600)", fontWeight:400, fontSize:12 }}>{mentor.grad_year}</span>
@@ -145,7 +145,7 @@ export default function AdminDashboard() {
         </div>
       ))}
 
-      <div className="admin-hint">Tap the ⚔️ logo 5 times to access this dashboard</div>
+      <div className="admin-hint">Tap the knight logo 5 times to access this dashboard</div>
     </div>
   )
 }

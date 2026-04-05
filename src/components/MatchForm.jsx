@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 
 const SPORTS = [["⚽","Soccer"],["🎾","Tennis"],["🏀","Basketball"],["🥍","Lacrosse"],["⚾","Baseball"],["🏃","Track & Field"],["🌲","Cross-country"]]
@@ -24,12 +24,32 @@ const BLANK = {
 }
 const TOTAL_STEPS = 6
 
+function ChipGroup({ items, selected, onToggle, label }) {
+  return (
+    <div className="chip-group" role="group" aria-label={label}>
+      {items.map(([em, name]) => (
+        <button type="button" key={name} className={`chip ${selected.includes(name) ? "on" : ""}`} onClick={() => onToggle(name)} aria-pressed={selected.includes(name)}>
+          {em} {name}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export default function MatchForm({ onSubmitted }) {
   const [step, setStep] = useState(0)
   const [role, setRole] = useState(null)
   const [form, setForm] = useState(BLANK)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
+  const topRef = useRef(null)
+
+  const goTo = (s) => {
+    setStep(s)
+    requestAnimationFrame(() => {
+      topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
 
   const tog = (k, v) => setForm(f => ({ ...f, [k]: f[k].includes(v) ? f[k].filter(x => x !== v) : [...f[k], v] }))
   const setF = (k, v) => setForm(f => ({ ...f, [k]: v }))
@@ -74,16 +94,6 @@ export default function MatchForm({ onSubmitted }) {
     onSubmitted({ name: form.name, role })
   }
 
-  const ChipGroup = ({ items, selected, onToggle }) => (
-    <div className="chip-group" role="group">
-      {items.map(([em, name]) => (
-        <button type="button" key={name} className={`chip ${selected.includes(name) ? "on" : ""}`} onClick={() => onToggle(name)} aria-pressed={selected.includes(name)}>
-          {em} {name}
-        </button>
-      ))}
-    </div>
-  )
-
   const stepContent = () => {
     switch (step) {
       case 0: return (
@@ -94,7 +104,7 @@ export default function MatchForm({ onSubmitted }) {
             <p className="sub" style={{ marginBottom:0 }}>Connecting Nova's seniors and sophomores — through shared interests, shared schedules, and shared goals.</p>
           </div>
           <label>I'm joining as a…</label>
-          <div style={{ display:"flex", gap:14, marginBottom:28 }}>
+          <div style={{ display:"flex", gap:12, marginBottom:28 }}>
             <button type="button" className={`role-card ${role === "mentor" ? "on" : ""}`} onClick={() => setRole("mentor")} aria-pressed={role === "mentor"}>
               <div style={{ fontSize:34 }}>🎓</div>
               <div className="role-title">Senior Mentor</div>
@@ -106,7 +116,7 @@ export default function MatchForm({ onSubmitted }) {
               <div className="role-desc">Class of '28 or '29 — get matched with a senior who gets it</div>
             </button>
           </div>
-          <button className="btn btn-gold" style={{ width:"100%" }} disabled={!role} onClick={() => setStep(1)}>Get Started →</button>
+          <button type="button" className="btn btn-gold" style={{ width:"100%" }} disabled={!role} onClick={() => goTo(1)}>Get Started →</button>
         </>
       )
 
@@ -115,8 +125,8 @@ export default function MatchForm({ onSubmitted }) {
           <h2>The basics</h2>
           <p className="sub">Just a few quick details about you.</p>
           <div className="field-group">
-            <label>Your name</label>
-            <input type="text" placeholder="First and last name" value={form.name} onChange={e => setF("name", e.target.value)} />
+            <label htmlFor="name-input">Your name</label>
+            <input id="name-input" type="text" placeholder="First and last name" value={form.name} onChange={e => setF("name", e.target.value)} autoComplete="name" />
           </div>
           <div className="field-group">
             <label>Graduation year</label>
@@ -129,12 +139,12 @@ export default function MatchForm({ onSubmitted }) {
             </div>
           </div>
           <div className="field-group">
-            <label>Gender preference for your {role === "mentee" ? "mentor" : "mentee"} (optional)</label>
-            <textarea value={form.genderPref} onChange={e => setF("genderPref", e.target.value)} placeholder="Leave blank if no preference — feel free to elaborate if you'd like." rows={2} />
+            <label htmlFor="gender-pref">Gender preference for your {role === "mentee" ? "mentor" : "mentee"} <span style={{ color:"var(--slate-400)", fontWeight:400, textTransform:"none", letterSpacing:0 }}>(optional)</span></label>
+            <textarea id="gender-pref" value={form.genderPref} onChange={e => setF("genderPref", e.target.value)} placeholder="Leave blank if no preference — feel free to elaborate if you'd like." rows={2} />
           </div>
           <div className="nav-row">
-            <button className="btn btn-ghost" onClick={() => setStep(0)}>← Back</button>
-            <button className="btn btn-gold" style={{ flex:1 }} disabled={!canNext()} onClick={() => setStep(2)}>Continue →</button>
+            <button type="button" className="btn btn-ghost" onClick={() => goTo(0)}>← Back</button>
+            <button type="button" className="btn btn-gold" style={{ flex:1 }} disabled={!canNext()} onClick={() => goTo(2)}>Continue →</button>
           </div>
         </>
       )
@@ -145,15 +155,15 @@ export default function MatchForm({ onSubmitted }) {
           <p className="sub">What you're into outside the classroom.</p>
           <div className="field-group">
             <label>Sports you play</label>
-            <ChipGroup items={SPORTS} selected={form.sports} onToggle={v => tog("sports", v)} />
+            <ChipGroup items={SPORTS} selected={form.sports} onToggle={v => tog("sports", v)} label="Sports you play" />
           </div>
           <div className="field-group">
-            <label>What do you do in your free time? <span style={{ color:"var(--slate-400)", fontWeight:400, textTransform:"none", letterSpacing:0 }}>(list 3–8 things)</span></label>
-            <textarea value={form.freeTime} onChange={e => setF("freeTime", e.target.value)} placeholder="e.g. hiking, cooking, painting, video games, journaling, watching F1…" rows={3} />
+            <label htmlFor="free-time">What do you do in your free time? <span style={{ color:"var(--slate-400)", fontWeight:400, textTransform:"none", letterSpacing:0 }}>(list 3–8 things)</span></label>
+            <textarea id="free-time" value={form.freeTime} onChange={e => setF("freeTime", e.target.value)} placeholder="e.g. hiking, cooking, painting, video games, journaling, watching F1…" rows={3} />
           </div>
           <div className="nav-row">
-            <button className="btn btn-ghost" onClick={() => setStep(1)}>← Back</button>
-            <button className="btn btn-gold" style={{ flex:1 }} onClick={() => setStep(3)}>Continue →</button>
+            <button type="button" className="btn btn-ghost" onClick={() => goTo(1)}>← Back</button>
+            <button type="button" className="btn btn-gold" style={{ flex:1 }} onClick={() => goTo(3)}>Continue →</button>
           </div>
         </>
       )
@@ -164,15 +174,15 @@ export default function MatchForm({ onSubmitted }) {
           <p className="sub">Your club and activity involvement at Nova.</p>
           <div className="field-group">
             <label>Forensics & competitions</label>
-            <ChipGroup items={FORENSICS} selected={form.forensics} onToggle={v => tog("forensics", v)} />
+            <ChipGroup items={FORENSICS} selected={form.forensics} onToggle={v => tog("forensics", v)} label="Forensics and competitions" />
           </div>
           <div className="field-group">
             <label>Clubs you're in (or interested in)</label>
-            <ChipGroup items={CLUBS} selected={form.clubs} onToggle={v => tog("clubs", v)} />
+            <ChipGroup items={CLUBS} selected={form.clubs} onToggle={v => tog("clubs", v)} label="Clubs" />
           </div>
           <div className="nav-row">
-            <button className="btn btn-ghost" onClick={() => setStep(2)}>← Back</button>
-            <button className="btn btn-gold" style={{ flex:1 }} onClick={() => setStep(4)}>Continue →</button>
+            <button type="button" className="btn btn-ghost" onClick={() => goTo(2)}>← Back</button>
+            <button type="button" className="btn btn-gold" style={{ flex:1 }} onClick={() => goTo(4)}>Continue →</button>
           </div>
         </>
       )
@@ -186,7 +196,7 @@ export default function MatchForm({ onSubmitted }) {
               <div key={p.k} className="prio-row">
                 <div className="prio-label">
                   <div className="prio-label-text">{p.e} {role === "mentee" ? p.mentee : p.mentor}</div>
-                  <input type="range" min={1} max={5} value={form.priorities[p.k]} onChange={e => setPrio(p.k, +e.target.value)} />
+                  <input type="range" min={1} max={5} value={form.priorities[p.k]} onChange={e => setPrio(p.k, +e.target.value)} aria-label={role === "mentee" ? p.mentee : p.mentor} />
                   <div className="range-labels"><span>Not really</span><span>Very important</span></div>
                 </div>
                 <div className="prio-val">{form.priorities[p.k]}</div>
@@ -194,8 +204,8 @@ export default function MatchForm({ onSubmitted }) {
             ))}
           </div>
           <div className="nav-row">
-            <button className="btn btn-ghost" onClick={() => setStep(3)}>← Back</button>
-            <button className="btn btn-gold" style={{ flex:1 }} onClick={() => setStep(5)}>Continue →</button>
+            <button type="button" className="btn btn-ghost" onClick={() => goTo(3)}>← Back</button>
+            <button type="button" className="btn btn-gold" style={{ flex:1 }} onClick={() => goTo(5)}>Continue →</button>
           </div>
         </>
       )
@@ -208,23 +218,23 @@ export default function MatchForm({ onSubmitted }) {
             <label>Days that work for you</label>
             <div className="chip-group">
               {DAYS.map(d => (
-                <button type="button" key={d} className={`chip ${form.availDays.includes(d) ? "on" : ""}`} onClick={() => tog("availDays", d)} aria-pressed={form.availDays.includes(d)} style={{ padding:"9px 18px", fontWeight:700 }}>
+                <button type="button" key={d} className={`chip ${form.availDays.includes(d) ? "on" : ""}`} onClick={() => tog("availDays", d)} aria-pressed={form.availDays.includes(d)} style={{ padding:"10px 18px", fontWeight:700 }}>
                   {d}
                 </button>
               ))}
             </div>
           </div>
           <div className="field-group">
-            <label>Days that absolutely DON'T work (or "N/A")</label>
-            <input type="text" placeholder='e.g. Monday, Thursday — or "N/A"' value={form.unavailDays} onChange={e => setF("unavailDays", e.target.value)} />
+            <label htmlFor="unavail-days">Days that absolutely DON'T work (or "N/A")</label>
+            <input id="unavail-days" type="text" placeholder='e.g. Monday, Thursday — or "N/A"' value={form.unavailDays} onChange={e => setF("unavailDays", e.target.value)} />
           </div>
           <div className="field-group">
-            <label>Any notes on changing availability? (optional)</label>
-            <textarea value={form.availNotes} onChange={e => setF("availNotes", e.target.value)} placeholder="e.g. Busy in March during Mock Trial season, free every Friday…" rows={2} />
+            <label htmlFor="avail-notes">Any notes on changing availability? <span style={{ color:"var(--slate-400)", fontWeight:400, textTransform:"none", letterSpacing:0 }}>(optional)</span></label>
+            <textarea id="avail-notes" value={form.availNotes} onChange={e => setF("availNotes", e.target.value)} placeholder="e.g. Busy in March during Mock Trial season, free every Friday…" rows={2} />
           </div>
           <div className="nav-row">
-            <button className="btn btn-ghost" onClick={() => setStep(4)}>← Back</button>
-            <button className="btn btn-gold" style={{ flex:1 }} onClick={() => setStep(6)}>Continue →</button>
+            <button type="button" className="btn btn-ghost" onClick={() => goTo(4)}>← Back</button>
+            <button type="button" className="btn btn-gold" style={{ flex:1 }} onClick={() => goTo(6)}>Continue →</button>
           </div>
         </>
       )
@@ -234,24 +244,24 @@ export default function MatchForm({ onSubmitted }) {
           <h2>Almost there!</h2>
           <p className="sub">Any final thoughts for the NHS team before we preview your profile?</p>
           <div className="field-group">
-            <label>Anything else for your match? (optional)</label>
-            <textarea value={form.matchComments} onChange={e => setF("matchComments", e.target.value)} placeholder="Specific things you're hoping to get from this program, personality notes, etc." rows={3} />
+            <label htmlFor="match-comments">Anything else for your match? <span style={{ color:"var(--slate-400)", fontWeight:400, textTransform:"none", letterSpacing:0 }}>(optional)</span></label>
+            <textarea id="match-comments" value={form.matchComments} onChange={e => setF("matchComments", e.target.value)} placeholder="Specific things you're hoping to get from this program, personality notes, etc." rows={3} />
           </div>
           <div className="field-group">
-            <label>Other questions or comments (optional)</label>
-            <textarea value={form.otherComments} onChange={e => setF("otherComments", e.target.value)} placeholder="Questions about the program, how it works, etc." rows={2} />
+            <label htmlFor="other-comments">Other questions or comments <span style={{ color:"var(--slate-400)", fontWeight:400, textTransform:"none", letterSpacing:0 }}>(optional)</span></label>
+            <textarea id="other-comments" value={form.otherComments} onChange={e => setF("otherComments", e.target.value)} placeholder="Questions about the program, how it works, etc." rows={2} />
           </div>
 
           <hr className="divider" />
 
-          <div style={{ fontWeight:700, fontSize:12, color:"var(--slate-600)", marginBottom:12, textTransform:"uppercase", letterSpacing:".06em" }}>Your Profile Preview</div>
+          <div style={{ fontWeight:700, fontSize:12, color:"var(--slate-600)", marginBottom:12, textTransform:"uppercase", letterSpacing:".06em" }}>Your profile preview</div>
           <div className="preview-card">
             <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:14 }}>
-              <div style={{ width:44, height:44, borderRadius:"50%", background:"var(--navy)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>
+              <div style={{ width:44, height:44, borderRadius:"50%", background:"var(--navy)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, flexShrink:0 }}>
                 {role === "mentor" ? "🎓" : "🌱"}
               </div>
-              <div>
-                <div style={{ fontWeight:800, fontSize:16, color:"var(--navy)" }}>{form.name || "—"}</div>
+              <div style={{ minWidth:0 }}>
+                <div style={{ fontWeight:800, fontSize:16, color:"var(--navy)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{form.name || "—"}</div>
                 <div style={{ color:"var(--slate-600)", fontSize:13 }}>Class of {form.gradYear || "—"} · {role === "mentor" ? "Senior Mentor" : "Sophomore Mentee"}</div>
               </div>
             </div>
@@ -268,11 +278,11 @@ export default function MatchForm({ onSubmitted }) {
             </div>
           </div>
 
-          {error && <div className="error-banner">{error}</div>}
+          {error && <div className="error-banner" role="alert">{error}</div>}
 
           <div className="nav-row">
-            <button className="btn btn-ghost" onClick={() => setStep(5)}>← Back</button>
-            <button className="btn btn-gold" style={{ flex:1 }} disabled={submitting} onClick={handleSubmit}>
+            <button type="button" className="btn btn-ghost" onClick={() => goTo(5)}>← Back</button>
+            <button type="button" className="btn btn-gold" style={{ flex:1 }} disabled={submitting} onClick={handleSubmit}>
               {submitting ? "Submitting…" : "Submit My Profile ✓"}
             </button>
           </div>
@@ -285,6 +295,7 @@ export default function MatchForm({ onSubmitted }) {
 
   return (
     <>
+      <div ref={topRef} />
       {step > 0 && (
         <div style={{ marginTop:14 }}>
           <div className="step-indicator">

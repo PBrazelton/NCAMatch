@@ -38,13 +38,13 @@ export default function App() {
       {/* Header */}
       <div style={{ width:'100%', maxWidth:580, marginBottom:20 }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div onClick={handleLogoTap} style={{ cursor:'pointer', display:'flex', alignItems:'center', gap:10 }}>
+          <button type="button" onClick={handleLogoTap} aria-label="Nova NHS home" style={{ cursor:'pointer', display:'flex', alignItems:'center', gap:10, background:'none', border:'none', padding:0, WebkitTapHighlightColor:'transparent' }}>
             <img src="/knight-helmet.png" alt="" className="knight-logo" />
             <div>
               <div style={{ color:'var(--gold)', fontFamily:'Cormorant Garamond,serif', fontSize:18, fontWeight:700, lineHeight:1 }}>Nova NHS</div>
               <div style={{ color:'rgba(255,255,255,.45)', fontSize:10, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase' }}>Match Program</div>
             </div>
-          </div>
+          </button>
           {view !== 'form' && (
             <button className="btn btn-ghost" onClick={resetAll} style={{ fontSize:12, padding:'7px 14px', color:'rgba(255,255,255,.6)', borderColor:'rgba(255,255,255,.2)' }}>
               ← New Form
@@ -73,7 +73,7 @@ export default function App() {
                 <li>Meet your {submitted?.role === 'mentor' ? 'mentee' : 'mentor'} during House time — say hi! 👋</li>
               </ul>
             </div>
-            <button className="btn btn-gold" style={{ width:'100%' }} onClick={resetAll}>Submit Another Profile</button>
+            <button type="button" className="btn btn-gold" style={{ width:'100%' }} onClick={resetAll}>Submit Another Profile</button>
           </div>
         )}
 
