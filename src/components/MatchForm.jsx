@@ -19,6 +19,26 @@ const DEFAULT_PRIOS = [
 const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"]
 const TOTAL_STEPS = 6
 
+// Compute grad years dynamically based on school year
+// School year starts in August: Aug 2026 → 2026-2027 school year
+function getGradYears() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth() // 0-indexed
+  const schoolYearStart = month >= 7 ? year : year - 1 // Aug+ = current year, else previous
+  // Seniors graduate schoolYearStart+1, Juniors +2, Sophomores +3, Freshmen +4
+  const senior = schoolYearStart + 1
+  const junior = schoolYearStart + 2
+  const sophomore = schoolYearStart + 3
+  const freshman = schoolYearStart + 4
+  return {
+    mentor: [`'${senior % 100}`, `'${sophomore % 100}`], // Seniors & Sophomores
+    mentee: [`'${junior % 100}`, `'${freshman % 100}`],  // Juniors & Freshmen
+  }
+}
+
+const GRAD_YEARS = getGradYears()
+
 function ChipGroup({ items, selected, onToggle, label }) {
   return (
     <div className="chip-group" role="group" aria-label={label}>
@@ -124,19 +144,19 @@ export default function MatchForm({ onSubmitted }) {
           <div style={{ textAlign:"center", marginBottom:28 }}>
             <img src="/knight-helmet.png" alt="Nova Knights" className="knight-logo-hero" />
             <h1>NHS Match Program</h1>
-            <p className="sub" style={{ marginBottom:0 }}>Connecting Nova's seniors and sophomores — through shared interests, shared schedules, and shared goals.</p>
+            <p className="sub" style={{ marginBottom:0 }}>Connecting Nova Knights — through shared interests, shared schedules, and shared goals.</p>
           </div>
           <label>I'm joining as a…</label>
           <div style={{ display:"flex", gap:12, marginBottom:28 }}>
             <button type="button" className={`role-card ${role === "mentor" ? "on" : ""}`} onClick={() => setRole("mentor")} aria-pressed={role === "mentor"}>
               <div style={{ fontSize:34 }}>🎓</div>
-              <div className="role-title">Senior Mentor</div>
-              <div className="role-desc">Class of '27 — guide a sophomore through their Nova journey</div>
+              <div className="role-title">Mentor</div>
+              <div className="role-desc">Seniors & sophomores guide juniors and freshmen through their Nova journey</div>
             </button>
             <button type="button" className={`role-card ${role === "mentee" ? "on" : ""}`} onClick={() => setRole("mentee")} aria-pressed={role === "mentee"}>
               <div style={{ fontSize:34 }}>🌱</div>
-              <div className="role-title">Sophomore Mentee</div>
-              <div className="role-desc">Class of '28 or '29 — get matched with a senior who gets it</div>
+              <div className="role-title">Mentee</div>
+              <div className="role-desc">Juniors & freshmen get matched with an upperclassman who gets it</div>
             </button>
           </div>
           <button type="button" className="btn btn-gold" style={{ width:"100%" }} disabled={!role} onClick={() => goTo(1)}>Get Started →</button>
@@ -154,7 +174,7 @@ export default function MatchForm({ onSubmitted }) {
           <div className="field-group">
             <label>Graduation year</label>
             <div className="chip-group">
-              {(role === "mentor" ? ["'27"] : ["'28","'29"]).map(y => (
+              {GRAD_YEARS[role].map(y => (
                 <button type="button" key={y} className={`chip ${form.gradYear === y ? "on" : ""}`} onClick={() => setF("gradYear", y)} aria-pressed={form.gradYear === y} style={{ padding:"10px 22px", fontWeight:800, fontSize:15 }}>
                   {y}
                 </button>
