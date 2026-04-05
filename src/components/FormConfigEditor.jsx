@@ -27,6 +27,10 @@ function ChipEditor({ items, onChange }) {
     setAdding(false)
   }
 
+  const update = (idx, emoji, name) => {
+    onChange(items.map((item, i) => i === idx ? [emoji, name] : item))
+  }
+
   const remove = (idx) => {
     onChange(items.filter((_, i) => i !== idx))
   }
@@ -44,8 +48,20 @@ function ChipEditor({ items, onChange }) {
       {items.map(([em, name], i) => (
         <div key={`${name}-${i}`} className="config-item">
           <div className="config-item-preview">
-            <span className="config-item-emoji">{em}</span>
-            <span className="config-item-name">{name}</span>
+            <span
+              className="config-item-emoji config-editable"
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={e => { const v = e.target.textContent.trim(); if (v && v !== em) update(i, v, name) }}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur() } }}
+            >{em}</span>
+            <span
+              className="config-item-name config-editable"
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={e => { const v = e.target.textContent.trim(); if (v && v !== name) update(i, em, v) }}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur() } }}
+            >{name}</span>
           </div>
           <div className="config-item-actions">
             <button type="button" className="config-action-btn" onClick={() => move(i, -1)} disabled={i === 0} aria-label={`Move ${name} up`}>↑</button>

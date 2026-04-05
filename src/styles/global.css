@@ -500,7 +500,20 @@ input[type=range]::-webkit-slider-thumb:active { transform: scale(1.05); }
   min-width: 0; overflow: hidden;
 }
 .config-item-emoji { flex-shrink: 0; }
-.config-item-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.config-item-name { min-width: 0; }
+
+.config-editable {
+  cursor: text; outline: none;
+  border-bottom: 1px dashed transparent;
+  transition: border-color .15s ease;
+  padding: 1px 2px; margin: -1px -2px;
+  border-radius: 3px;
+}
+.config-editable:hover { border-bottom-color: rgba(255,255,255,.35); }
+.config-editable:focus {
+  border-bottom-color: var(--gold);
+  background: rgba(255,255,255,.1);
+}
 
 .config-item-actions {
   display: flex; align-items: center; gap: 2px; flex-shrink: 0; margin-left: 8px;
