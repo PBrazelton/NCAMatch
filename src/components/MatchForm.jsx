@@ -89,7 +89,7 @@ export default function MatchForm({ onSubmitted }) {
       case 0: return (
         <>
           <div style={{ textAlign:"center", marginBottom:28 }}>
-            <div style={{ fontSize:48, marginBottom:12 }}>⚔️</div>
+            <img src="/knight-helmet.png" alt="Nova Knights" className="knight-logo-hero" />
             <h1>NHS Match Program</h1>
             <p className="sub" style={{ marginBottom:0 }}>Connecting Nova's seniors and sophomores — through shared interests, shared schedules, and shared goals.</p>
           </div>
@@ -148,7 +148,7 @@ export default function MatchForm({ onSubmitted }) {
             <ChipGroup items={SPORTS} selected={form.sports} onToggle={v => tog("sports", v)} />
           </div>
           <div className="field-group">
-            <label>What do you do in your free time? <span style={{ color:"#94a3b8", fontWeight:400, textTransform:"none", letterSpacing:0 }}>(list 3–8 things)</span></label>
+            <label>What do you do in your free time? <span style={{ color:"var(--slate-400)", fontWeight:400, textTransform:"none", letterSpacing:0 }}>(list 3–8 things)</span></label>
             <textarea value={form.freeTime} onChange={e => setF("freeTime", e.target.value)} placeholder="e.g. hiking, cooking, painting, video games, journaling, watching F1…" rows={3} />
           </div>
           <div className="nav-row">
@@ -244,15 +244,15 @@ export default function MatchForm({ onSubmitted }) {
 
           <hr className="divider" />
 
-          <div style={{ fontWeight:700, fontSize:12, color:"#475569", marginBottom:12, textTransform:"uppercase", letterSpacing:".06em" }}>Your Profile Preview</div>
+          <div style={{ fontWeight:700, fontSize:12, color:"var(--slate-600)", marginBottom:12, textTransform:"uppercase", letterSpacing:".06em" }}>Your Profile Preview</div>
           <div className="preview-card">
             <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:14 }}>
-              <div style={{ width:44, height:44, borderRadius:"50%", background:"#18154a", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>
+              <div style={{ width:44, height:44, borderRadius:"50%", background:"var(--navy)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>
                 {role === "mentor" ? "🎓" : "🌱"}
               </div>
               <div>
-                <div style={{ fontWeight:800, fontSize:16, color:"#18154a" }}>{form.name || "—"}</div>
-                <div style={{ color:"#64748b", fontSize:13 }}>Class of {form.gradYear || "—"} · {role === "mentor" ? "Senior Mentor" : "Sophomore Mentee"}</div>
+                <div style={{ fontWeight:800, fontSize:16, color:"var(--navy)" }}>{form.name || "—"}</div>
+                <div style={{ color:"var(--slate-600)", fontSize:13 }}>Class of {form.gradYear || "—"} · {role === "mentor" ? "Senior Mentor" : "Sophomore Mentee"}</div>
               </div>
             </div>
             {form.sports.length > 0 && <div className="preview-row"><div className="preview-key">Sports</div><div className="preview-val">{form.sports.join(", ")}</div></div>}
@@ -268,11 +268,7 @@ export default function MatchForm({ onSubmitted }) {
             </div>
           </div>
 
-          {error && (
-            <div style={{ background:"#fef2f2", border:"2px solid #fecaca", borderRadius:12, padding:"12px 16px", marginBottom:16, color:"#991b1b", fontSize:13, fontWeight:600 }}>
-              {error}
-            </div>
-          )}
+          {error && <div className="error-banner">{error}</div>}
 
           <div className="nav-row">
             <button className="btn btn-ghost" onClick={() => setStep(5)}>← Back</button>
@@ -291,15 +287,20 @@ export default function MatchForm({ onSubmitted }) {
     <>
       {step > 0 && (
         <div style={{ marginTop:14 }}>
+          <div className="step-indicator">
+            {Array.from({ length: TOTAL_STEPS }, (_, i) => (
+              <div key={i} className={`step-dot ${i + 1 === step ? 'active' : i + 1 < step ? 'done' : ''}`} />
+            ))}
+          </div>
           <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
             <span style={{ color:"rgba(255,255,255,.4)", fontSize:11 }}>Step {step} of {TOTAL_STEPS}</span>
-            <span style={{ color:"#fbbf24", fontSize:11, fontWeight:700 }}>{Math.round(step / TOTAL_STEPS * 100)}%</span>
+            <span style={{ color:"var(--gold)", fontSize:11, fontWeight:700 }}>{Math.round(step / TOTAL_STEPS * 100)}%</span>
           </div>
           <div className="prog-bar"><div className="prog-fill" style={{ width:`${step / TOTAL_STEPS * 100}%` }} /></div>
         </div>
       )}
       <div style={{ width:"100%", maxWidth:580, marginTop: step > 0 ? 20 : 0 }}>
-        <div className="card">{stepContent()}</div>
+        <div className="card" key={step}>{stepContent()}</div>
       </div>
     </>
   )

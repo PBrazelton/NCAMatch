@@ -39,9 +39,9 @@ export default function App() {
       <div style={{ width:'100%', maxWidth:580, marginBottom:20 }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div onClick={handleLogoTap} style={{ cursor:'pointer', display:'flex', alignItems:'center', gap:10 }}>
-            <span style={{ fontSize:24 }}>⚔️</span>
+            <img src="/knight-helmet.png" alt="" className="knight-logo" />
             <div>
-              <div style={{ color:'#fbbf24', fontFamily:'Cormorant Garamond,serif', fontSize:18, fontWeight:700, lineHeight:1 }}>Nova NHS</div>
+              <div style={{ color:'var(--gold)', fontFamily:'Cormorant Garamond,serif', fontSize:18, fontWeight:700, lineHeight:1 }}>Nova NHS</div>
               <div style={{ color:'rgba(255,255,255,.45)', fontSize:10, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase' }}>Match Program</div>
             </div>
           </div>
@@ -61,7 +61,7 @@ export default function App() {
           <div className="card" style={{ textAlign:'center' }}>
             <div className="confetti">🎉</div>
             <div className="success-title">You're in, {firstName}!</div>
-            <p style={{ color:'#64748b', fontSize:15, marginBottom:0 }}>
+            <p style={{ color:'var(--slate-600)', fontSize:15, marginBottom:0 }}>
               Your profile has been submitted to the NHS Match Team.
             </p>
             <div className="next-steps">

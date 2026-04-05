@@ -57,7 +57,7 @@ export default function AdminDashboard() {
     return (
       <div className="card" style={{ textAlign:"center", padding:"48px 28px" }}>
         <div style={{ fontSize:32, marginBottom:12 }}>⏳</div>
-        <div style={{ color:"#64748b", fontSize:14 }}>Loading submissions…</div>
+        <div style={{ color:"var(--slate-600)", fontSize:14 }}>Loading submissions…</div>
       </div>
     )
   }
@@ -66,8 +66,8 @@ export default function AdminDashboard() {
     return (
       <div className="card" style={{ textAlign:"center", padding:"48px 28px" }}>
         <div style={{ fontSize:32, marginBottom:12 }}>⚠️</div>
-        <div style={{ color:"#991b1b", fontSize:14, fontWeight:600 }}>{error}</div>
-        <p style={{ color:"#64748b", fontSize:13, marginTop:8 }}>Make sure Supabase and Netlify functions are configured.</p>
+        <div style={{ color:"var(--error-text)", fontSize:14, fontWeight:600 }}>{error}</div>
+        <p style={{ color:"var(--slate-600)", fontSize:13, marginTop:8 }}>Make sure Supabase and Netlify functions are configured.</p>
       </div>
     )
   }
@@ -97,20 +97,20 @@ export default function AdminDashboard() {
       <h3>Suggested Matches</h3>
 
       {matches.length === 0 ? (
-        <div style={{ textAlign:"center", color:"#94a3b8", padding:"32px 0", fontSize:14 }}>
+        <div style={{ textAlign:"center", color:"var(--slate-400)", padding:"32px 0", fontSize:14 }}>
           No mentees yet — check back once submissions arrive!
         </div>
       ) : matches.map(({ mentee, top }) => (
         <div key={mentee.id} className="mentee-block">
           <div className="mentee-header">
-            <span style={{ fontWeight:800, color:"#18154a", fontSize:14 }}>🌱 {mentee.name}</span>
-            <span style={{ color:"#64748b", fontSize:12, marginLeft:8 }}>
+            <span style={{ fontWeight:800, color:"var(--navy)", fontSize:14 }}>🌱 {mentee.name}</span>
+            <span style={{ color:"var(--slate-600)", fontSize:12, marginLeft:8 }}>
               {mentee.grad_year} · Available: {(mentee.avail_days || []).join(", ") || "TBD"}
             </span>
           </div>
           <div className="mentee-body">
             {top.length === 0 ? (
-              <div style={{ fontSize:13, color:"#94a3b8" }}>No mentors to match yet</div>
+              <div style={{ fontSize:13, color:"var(--slate-400)" }}>No mentors to match yet</div>
             ) : top.map(({ mentor, score }, i) => {
               const pct = Math.min(100, Math.round(score / MAX_SCORE * 100))
               const sharedItems = [
@@ -122,19 +122,19 @@ export default function AdminDashboard() {
               return (
                 <div key={mentor.id} className="mentor-match" style={{ background: i === 0 ? "#fffbeb" : "#f8fafc", border: `1.5px solid ${i === 0 ? "#fde68a" : "#e2e8f0"}` }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
-                    <div style={{ fontWeight:700, fontSize:13, color:"#18154a" }}>
-                      {i === 0 ? "⭐ " : ""}{mentor.name} <span style={{ color:"#64748b", fontWeight:400, fontSize:12 }}>{mentor.grad_year}</span>
+                    <div style={{ fontWeight:700, fontSize:13, color:"var(--navy)" }}>
+                      {i === 0 ? "⭐ " : ""}{mentor.name} <span style={{ color:"var(--slate-600)", fontWeight:400, fontSize:12 }}>{mentor.grad_year}</span>
                     </div>
                     <span className="badge" style={{ fontSize:11 }}>{pct}% match</span>
                   </div>
                   <div className="score-bar"><div className="score-fill" style={{ width:`${pct}%` }} /></div>
                   {sharedItems.length > 0 && (
-                    <div style={{ fontSize:11, color:"#64748b", marginTop:5 }}>
+                    <div style={{ fontSize:11, color:"var(--slate-600)", marginTop:5 }}>
                       Shared: {sharedItems.join(", ")}
                     </div>
                   )}
                   {(mentor.avail_days || []).length > 0 && (
-                    <div style={{ fontSize:11, color:"#94a3b8", marginTop:2 }}>
+                    <div style={{ fontSize:11, color:"var(--slate-400)", marginTop:2 }}>
                       Available: {sharedDays.length > 0 ? sharedDays.join(", ") : "No overlapping days"}
                     </div>
                   )}
