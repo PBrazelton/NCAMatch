@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import FormConfigEditor from './FormConfigEditor'
+import MatchDetail from './MatchDetail'
 
 // Dynamic max: 7 sports * 3 + 17 clubs * 2 + 6 forensics * 2 + 5 days * 1 + N priorities * 4
 // Approximate with a reasonable cap based on actual priority count
@@ -44,6 +45,7 @@ export default function AdminDashboard() {
   const [priorities, setPriorities] = useState(DEFAULT_PRIOS)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [expanded, setExpanded] = useState(null) // "menteeId-mentorId" or null
 
   useEffect(() => {
     (async () => {
@@ -153,25 +155,39 @@ export default function AdminDashboard() {
                     ...(mentee.forensics || []).filter(f => (mentor.forensics || []).includes(f)),
                   ]
                   const sharedDays = (mentor.avail_days || []).filter(d => (mentee.avail_days || []).includes(d))
+                  const expandKey = `${mentee.id}-${mentor.id}`
+                  const isExpanded = expanded === expandKey
                   return (
-                    <div key={mentor.id} className="mentor-match" style={{ background: i === 0 ? "var(--warm-bg)" : "var(--slate-50)", border: `1.5px solid ${i === 0 ? "var(--warm-border)" : "var(--slate-200)"}` }}>
-                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
-                        <div style={{ fontWeight:700, fontSize:13, color:"var(--navy)" }}>
-                          {i === 0 ? "⭐ " : ""}{mentor.name} <span style={{ color:"var(--slate-600)", fontWeight:400, fontSize:12 }}>{mentor.grad_year}</span>
+                    <div key={mentor.id}>
+                      <button
+                        type="button"
+                        className={`mentor-match mentor-match-btn ${isExpanded ? 'expanded' : ''}`}
+                        style={{ background: i === 0 ? "var(--warm-bg)" : "var(--slate-50)", border: `1.5px solid ${i === 0 || isExpanded ? "var(--warm-border)" : "var(--slate-200)"}` }}
+                        onClick={() => setExpanded(isExpanded ? null : expandKey)}
+                        aria-expanded={isExpanded}
+                      >
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+                          <div style={{ fontWeight:700, fontSize:13, color:"var(--navy)", textAlign:"left" }}>
+                            {i === 0 ? "⭐ " : ""}{mentor.name} <span style={{ color:"var(--slate-600)", fontWeight:400, fontSize:12 }}>{mentor.grad_year}</span>
+                          </div>
+                          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                            <span className="badge" style={{ fontSize:11 }}>{pct}% match</span>
+                            <span className={`md-expand-icon ${isExpanded ? 'open' : ''}`}>›</span>
+                          </div>
                         </div>
-                        <span className="badge" style={{ fontSize:11 }}>{pct}% match</span>
-                      </div>
-                      <div className="score-bar"><div className="score-fill" style={{ width:`${pct}%` }} /></div>
-                      {sharedItems.length > 0 && (
-                        <div style={{ fontSize:11, color:"var(--slate-600)", marginTop:5 }}>
-                          Shared: {sharedItems.join(", ")}
-                        </div>
-                      )}
-                      {(mentor.avail_days || []).length > 0 && (
-                        <div style={{ fontSize:11, color:"var(--slate-400)", marginTop:2 }}>
-                          Available: {sharedDays.length > 0 ? sharedDays.join(", ") : "No overlapping days"}
-                        </div>
-                      )}
+                        <div className="score-bar"><div className="score-fill" style={{ width:`${pct}%` }} /></div>
+                        {!isExpanded && sharedItems.length > 0 && (
+                          <div style={{ fontSize:11, color:"var(--slate-600)", marginTop:5, textAlign:"left" }}>
+                            Shared: {sharedItems.join(", ")}
+                          </div>
+                        )}
+                        {!isExpanded && (mentor.avail_days || []).length > 0 && (
+                          <div style={{ fontSize:11, color:"var(--slate-400)", marginTop:2, textAlign:"left" }}>
+                            Available: {sharedDays.length > 0 ? sharedDays.join(", ") : "No overlapping days"}
+                          </div>
+                        )}
+                      </button>
+                      {isExpanded && <MatchDetail mentee={mentee} mentor={mentor} priorities={priorities} />}
                     </div>
                   )
                 })}
