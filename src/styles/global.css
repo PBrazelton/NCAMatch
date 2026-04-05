@@ -415,6 +415,198 @@ input[type=range]::-webkit-slider-thumb:active { transform: scale(1.05); }
   80%      { transform: translateX(4px); }
 }
 
+/* ── Admin Tabs ─────────────────────────────────────────────────── */
+
+.admin-tabs {
+  display: flex; gap: 4px; margin-bottom: 24px;
+  background: var(--slate-100); border-radius: var(--radius-md);
+  padding: 4px;
+}
+.admin-tab {
+  flex: 1; padding: 10px 16px; border: none; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: transparent; color: var(--slate-600);
+  transition: background .2s var(--ease-out), color .2s var(--ease-out), box-shadow .2s var(--ease-out);
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+}
+.admin-tab:hover { color: var(--navy); }
+.admin-tab.active {
+  background: var(--white); color: var(--navy);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+/* ── Config Editor ──────────────────────────────────────────────── */
+
+.config-editor { margin-top: 4px; }
+
+.config-section {
+  border: 1.5px solid var(--slate-200); border-radius: var(--radius-md);
+  margin-bottom: 10px; overflow: hidden;
+  transition: border-color .2s var(--ease-out);
+}
+.config-section.open { border-color: var(--gold); }
+
+.config-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 14px 16px; border: none; background: var(--slate-50);
+  cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700; color: var(--navy);
+  min-height: 48px; text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .15s ease;
+}
+.config-section-header:hover { background: var(--slate-100); }
+
+.config-section-title {
+  display: flex; align-items: center; gap: 8px;
+}
+.config-section-emoji { font-size: 18px; }
+.config-section-count {
+  background: var(--slate-200); color: var(--slate-600);
+  font-size: 11px; font-weight: 700; padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+.config-section.open .config-section-count {
+  background: var(--navy); color: var(--gold);
+}
+
+.config-chevron {
+  font-size: 20px; font-weight: 700; color: var(--slate-400);
+  transition: transform .2s var(--ease-out);
+  display: inline-block;
+}
+.config-chevron.open { transform: rotate(90deg); }
+
+.config-section-body {
+  padding: 16px;
+  animation: slideUp .25s var(--ease-out);
+}
+
+/* ── Config Items (chips editor) ────────────────────────────────── */
+
+.config-items { display: flex; flex-direction: column; gap: 6px; }
+
+.config-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-radius: var(--radius-md);
+  background: var(--navy); border: 2px solid var(--gold);
+  animation: slideUp .2s var(--ease-out);
+}
+.config-item-preview {
+  display: flex; align-items: center; gap: 6px;
+  color: var(--white); font-weight: 600; font-size: 14px;
+  min-width: 0; overflow: hidden;
+}
+.config-item-emoji { flex-shrink: 0; }
+.config-item-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.config-item-actions {
+  display: flex; align-items: center; gap: 2px; flex-shrink: 0; margin-left: 8px;
+}
+
+.config-action-btn {
+  width: 36px; height: 36px; border: none; border-radius: var(--radius-sm);
+  background: transparent; color: rgba(255,255,255,.6);
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: background .15s ease, color .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.config-action-btn:hover { background: rgba(255,255,255,.15); color: var(--white); }
+.config-action-btn:disabled { opacity: .3; cursor: default; }
+.config-action-btn:disabled:hover { background: transparent; }
+.config-remove-btn:hover { background: rgba(220,38,38,.2); color: #fca5a5; }
+
+/* ── Config Add Form ────────────────────────────────────────────── */
+
+.config-add-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; padding: 12px; margin-top: 4px;
+  border: 2px dashed var(--slate-200); border-radius: var(--radius-md);
+  background: transparent; color: var(--slate-400);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+}
+.config-add-btn:hover {
+  border-color: var(--gold); color: var(--gold-hover);
+  background: var(--warm-bg);
+}
+
+.config-add-form {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-top: 4px; padding: 10px;
+  border: 2px solid var(--gold); border-radius: var(--radius-md);
+  background: var(--warm-bg);
+  animation: slideUp .2s var(--ease-out);
+}
+.config-emoji-input {
+  width: 48px !important; min-width: 48px; flex-shrink: 0;
+  text-align: center; font-size: 18px !important;
+  padding: 8px 4px !important; border-radius: var(--radius-sm) !important;
+}
+.config-name-input {
+  flex: 1; min-width: 0;
+}
+.config-confirm-btn {
+  padding: 8px 14px !important; min-height: 40px !important; font-size: 16px !important;
+}
+
+/* ── Config Priority Cards ──────────────────────────────────────── */
+
+.config-prio-card {
+  border: 1.5px solid var(--slate-200); border-radius: var(--radius-md);
+  padding: 14px; margin-bottom: 6px;
+  background: var(--white);
+  animation: slideUp .2s var(--ease-out);
+}
+.config-prio-card-new {
+  border-color: var(--gold); background: var(--warm-bg);
+}
+
+.config-prio-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+}
+.config-prio-key {
+  font-size: 12px; font-weight: 600; color: var(--slate-400);
+  background: var(--slate-100); padding: 2px 8px; border-radius: var(--radius-sm);
+  font-family: monospace;
+}
+
+.config-prio-fields { display: flex; flex-direction: column; gap: 8px; }
+.config-prio-label { display: flex; flex-direction: column; gap: 3px; }
+.config-prio-field-label {
+  font-size: 11px; font-weight: 700; color: var(--slate-400);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.config-prio-fields input[type=text] {
+  font-size: 14px !important; padding: 8px 10px !important;
+}
+
+/* ── Config Save Bar ────────────────────────────────────────────── */
+
+.config-save-bar {
+  position: sticky; bottom: -32px;
+  margin: 20px -24px -32px; padding: 16px 24px;
+  background: linear-gradient(to top, var(--white) 60%, transparent);
+  animation: slideUp .25s var(--ease-out);
+}
+@media (min-width: 400px) {
+  .config-save-bar { margin: 20px -28px -32px; padding: 16px 28px; }
+}
+.config-save-btn {
+  width: 100%;
+}
+.config-save-btn.saved {
+  background: #22c55e; color: var(--white);
+  box-shadow: 0 4px 12px rgba(34,197,94,.3);
+}
+
 /* ── Reduced Motion ─────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {

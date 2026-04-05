@@ -1,15 +1,15 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 
-const SPORTS = [["⚽","Soccer"],["🎾","Tennis"],["🏀","Basketball"],["🥍","Lacrosse"],["⚾","Baseball"],["🏃","Track & Field"],["🌲","Cross-country"]]
-const FORENSICS = [["⚖️","Mock Trial"],["🎤","Debate"],["🗣️","Speech"],["🤖","Robotics"],["🎭","Drama"],["🏛️","Youth in Government"]]
-const CLUBS = [
+const DEFAULT_SPORTS = [["⚽","Soccer"],["🎾","Tennis"],["🏀","Basketball"],["🥍","Lacrosse"],["⚾","Baseball"],["🏃","Track & Field"],["🌲","Cross-country"]]
+const DEFAULT_FORENSICS = [["⚖️","Mock Trial"],["🎤","Debate"],["🗣️","Speech"],["🤖","Robotics"],["🎭","Drama"],["🏛️","Youth in Government"]]
+const DEFAULT_CLUBS = [
   ["🏛️","Student Senate"],["⭐","NHS"],["🌏","AAPI Student Union"],["🌮","Latino Student Group"],
   ["✊","Black Student Union"],["🤝","The Collective"],["📚","Seminar Club"],["🏥","HOSA"],
   ["📰","Knightly Newspaper"],["🐾","Pawsitivity for Animals"],["♟️","Chess Club"],["📖","Bible Study Club"],
   ["🧶","Knitting Club"],["🧠","Bring Change to Mind"],["🌿","Green Team"],["💌","Letters of Love"],["📜","Dante Club"],
 ]
-const PRIOS = [
+const DEFAULT_PRIOS = [
   { k:"balance",    e:"⚖️", mentee:"Schoolwork / Life Balance",    mentor:"Helping with balance" },
   { k:"connection", e:"👋", mentee:"A friendly face in the halls", mentor:"Being a friendly presence" },
   { k:"college",    e:"🎓", mentee:"College Admissions Advice",     mentor:"Sharing college insights" },
@@ -17,11 +17,6 @@ const PRIOS = [
   { k:"chat",       e:"💬", mentee:"Just someone to talk to",       mentor:"Being a go-to listener" },
 ]
 const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"]
-const BLANK = {
-  name:"", gradYear:"", genderPref:"", sports:[], freeTime:"",
-  forensics:[], clubs:[], priorities:{balance:3,connection:3,college:3,activities:3,chat:3},
-  availDays:[], unavailDays:"", availNotes:"", matchComments:"", otherComments:"",
-}
 const TOTAL_STEPS = 6
 
 function ChipGroup({ items, selected, onToggle, label }) {
@@ -36,13 +31,41 @@ function ChipGroup({ items, selected, onToggle, label }) {
   )
 }
 
+function makeBlank(prios) {
+  return {
+    name:"", gradYear:"", genderPref:"", sports:[], freeTime:"",
+    forensics:[], clubs:[],
+    priorities: Object.fromEntries(prios.map(p => [p.k, 3])),
+    availDays:[], unavailDays:"", availNotes:"", matchComments:"", otherComments:"",
+  }
+}
+
 export default function MatchForm({ onSubmitted }) {
   const [step, setStep] = useState(0)
   const [role, setRole] = useState(null)
-  const [form, setForm] = useState(BLANK)
+  const [config, setConfig] = useState({
+    sports: DEFAULT_SPORTS, forensics: DEFAULT_FORENSICS,
+    clubs: DEFAULT_CLUBS, priorities: DEFAULT_PRIOS,
+  })
+  const [form, setForm] = useState(makeBlank(DEFAULT_PRIOS))
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
   const topRef = useRef(null)
+
+  useEffect(() => {
+    fetch('/.netlify/functions/form-config')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data) {
+          setConfig(data)
+          setForm(f => ({
+            ...f,
+            priorities: Object.fromEntries(data.priorities.map(p => [p.k, f.priorities[p.k] ?? 3])),
+          }))
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const goTo = (s) => {
     setStep(s)
@@ -155,7 +178,7 @@ export default function MatchForm({ onSubmitted }) {
           <p className="sub">What you're into outside the classroom.</p>
           <div className="field-group">
             <label>Sports you play</label>
-            <ChipGroup items={SPORTS} selected={form.sports} onToggle={v => tog("sports", v)} label="Sports you play" />
+            <ChipGroup items={config.sports} selected={form.sports} onToggle={v => tog("sports", v)} label="Sports you play" />
           </div>
           <div className="field-group">
             <label htmlFor="free-time">What do you do in your free time? <span style={{ color:"var(--slate-400)", fontWeight:400, textTransform:"none", letterSpacing:0 }}>(list 3–8 things)</span></label>
@@ -174,11 +197,11 @@ export default function MatchForm({ onSubmitted }) {
           <p className="sub">Your club and activity involvement at Nova.</p>
           <div className="field-group">
             <label>Forensics & competitions</label>
-            <ChipGroup items={FORENSICS} selected={form.forensics} onToggle={v => tog("forensics", v)} label="Forensics and competitions" />
+            <ChipGroup items={config.forensics} selected={form.forensics} onToggle={v => tog("forensics", v)} label="Forensics and competitions" />
           </div>
           <div className="field-group">
             <label>Clubs you're in (or interested in)</label>
-            <ChipGroup items={CLUBS} selected={form.clubs} onToggle={v => tog("clubs", v)} label="Clubs" />
+            <ChipGroup items={config.clubs} selected={form.clubs} onToggle={v => tog("clubs", v)} label="Clubs" />
           </div>
           <div className="nav-row">
             <button type="button" className="btn btn-ghost" onClick={() => goTo(2)}>← Back</button>
@@ -192,7 +215,7 @@ export default function MatchForm({ onSubmitted }) {
           <h2>{role === "mentee" ? "What are you looking for?" : "What can you offer?"}</h2>
           <p className="sub">Rate each on a scale of 1 (not really) to 5 (super important). This helps us find your best match.</p>
           <div style={{ marginBottom:24 }}>
-            {PRIOS.map(p => (
+            {config.priorities.map(p => (
               <div key={p.k} className="prio-row">
                 <div className="prio-label">
                   <div className="prio-label-text">{p.e} {role === "mentee" ? p.mentee : p.mentor}</div>
@@ -273,7 +296,7 @@ export default function MatchForm({ onSubmitted }) {
             <div className="preview-row">
               <div className="preview-key">Top priorities</div>
               <div className="preview-val">
-                {PRIOS.filter(p => form.priorities[p.k] >= 4).map(p => `${p.e} ${role === "mentee" ? p.mentee : p.mentor}`).join(" · ") || "Balanced across all areas"}
+                {config.priorities.filter(p => form.priorities[p.k] >= 4).map(p => `${p.e} ${role === "mentee" ? p.mentee : p.mentor}`).join(" · ") || "Balanced across all areas"}
               </div>
             </div>
           </div>
@@ -316,5 +339,3 @@ export default function MatchForm({ onSubmitted }) {
     </>
   )
 }
-
-export { PRIOS }
